@@ -46,3 +46,7 @@ Direct
         POTCAR=["Sr_sv", "Ti_sv", "O"],
     )
 }
+
+
+def example(*args):
+    pass
