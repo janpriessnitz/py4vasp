@@ -42,7 +42,21 @@ class TestIncar(AbstractTest):
         ("first = present # ; commented = out", {"FIRST": "present"}),
         ("second = tag ; ! commented = out", {"SECOND": "tag"}),
         ("comment # = in middle ; of = line", {}),
+        ("nested/tag=set inline", {"NESTED/TAG": "set inline"}),
+        (
+            """nested { tag = with inline delimiters }
+            two { layers { of = nesting }}
+            global = tag""",
+            {
+                "NESTED/TAG": "with inline delimiters",
+                "TWO/LAYERS/OF": "nesting",
+                "GLOBAL": "tag",
+            },
+        ),
     ],
 )
 def test_from_string(input, output):
+    import pprint
+
+    pprint.pprint(parse_incar_to_dict(input))
     assert parse_incar_to_dict(input) == output
