@@ -23,6 +23,11 @@ def parse_incar_to_dict(text):
 def _generate_tags(text):
     for line in text.splitlines():
         line_without_comments, *_ = re.split("[#!]", line, maxsplit=1)
-        tag, separator, value = line_without_comments.partition("=")
-        if separator:
-            yield tag.strip().upper(), value.strip()
+        for definition in line_without_comments.split(";"):
+            yield from _parse_definition(definition)
+
+
+def _parse_definition(definition):
+    tag, separator, value = definition.partition("=")
+    if separator:
+        yield tag.strip().upper(), value.strip()

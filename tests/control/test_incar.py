@@ -38,6 +38,7 @@ class TestIncar(AbstractTest):
         #     } # or = close""",
         #     {"IGNORE": "inline", "ALSO": "ignore", "AND/AFTER" : "open"},
         # ),
+        ("first=1;second=2", {"FIRST": "1", "SECOND": "2"}),
     ],
 )
 def test_from_string(input, output):
