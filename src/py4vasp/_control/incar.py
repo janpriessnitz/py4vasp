@@ -1,5 +1,7 @@
 # Copyright © VASP Software GmbH,
 # Licensed under the Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+import re
+
 from py4vasp._control import base
 
 
@@ -20,7 +22,7 @@ def parse_incar_to_dict(text):
 
 def _generate_tags(text):
     for line in text.splitlines():
-        line_without_comments, *_ = line.split("#")
+        line_without_comments, *_ = re.split("[#!]", line, maxsplit=1)
         tag, separator, value = line_without_comments.partition("=")
         if separator:
             yield tag.strip().upper(), value.strip()
