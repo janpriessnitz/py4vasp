@@ -39,6 +39,9 @@ class TestIncar(AbstractTest):
         #     {"IGNORE": "inline", "ALSO": "ignore", "AND/AFTER" : "open"},
         # ),
         ("first=1;second=2", {"FIRST": "1", "SECOND": "2"}),
+        ("first = present # ; commented = out", {"FIRST": "present"}),
+        ("second = tag ; ! commented = out", {"SECOND": "tag"}),
+        ("comment # = in middle ; of = line", {}),
     ],
 )
 def test_from_string(input, output):
