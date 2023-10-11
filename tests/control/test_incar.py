@@ -30,14 +30,14 @@ class TestIncar(AbstractTest):
             tag = value""",
             {"TAG": "value"},
         ),
-        # (
-        #     """ignore = inline # bash comment
-        #     also = ignore ! inline fortran comment
-        #     and { ! ignore comment
-        #        after = open
-        #     } # or = close""",
-        #     {"IGNORE": "inline", "ALSO": "ignore", "AND/AFTER" : "open"},
-        # ),
+        (
+            """ignore = inline # bash comment
+            also = ignore ! inline fortran comment
+            and { ! ignore comment
+               after = open
+            } # or = close""",
+            {"IGNORE": "inline", "ALSO": "ignore", "AND/AFTER" : "open"},
+        ),
         ("first=1;second=2", {"FIRST": "1", "SECOND": "2"}),
         ("first = present # ; commented = out", {"FIRST": "present"}),
         ("second = tag ; ! commented = out", {"SECOND": "tag"}),
@@ -51,6 +51,30 @@ class TestIncar(AbstractTest):
                 "NESTED/TAG": "with inline delimiters",
                 "TWO/LAYERS/OF": "nesting",
                 "GLOBAL": "tag",
+            },
+        ),
+        (
+            """single {
+                group = with
+                more = than
+                one = tag
+            }
+            nested {
+                group = with
+                multiple {
+                    layers = and
+                    tags { defined = within }
+                    inline = statements ; are = possible
+            }}""",
+            {
+                "SINGLE/GROUP": "with",
+                "SINGLE/MORE": "than",
+                "SINGLE/ONE": "tag",
+                "NESTED/GROUP": "with",
+                "NESTED/MULTIPLE/LAYERS": "and",
+                "NESTED/MULTIPLE/TAGS/DEFINED": "within",
+                "NESTED/MULTIPLE/INLINE": "statements",
+                "NESTED/MULTIPLE/ARE": "possible",
             },
         ),
     ],
