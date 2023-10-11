@@ -36,7 +36,7 @@ class TestIncar(AbstractTest):
             and { ! ignore comment
                after = open
             } # or = close""",
-            {"IGNORE": "inline", "ALSO": "ignore", "AND/AFTER" : "open"},
+            {"IGNORE": "inline", "ALSO": "ignore", "AND/AFTER": "open"},
         ),
         ("first=1;second=2", {"FIRST": "1", "SECOND": "2"}),
         ("first = present # ; commented = out", {"FIRST": "present"}),
@@ -76,6 +76,10 @@ class TestIncar(AbstractTest):
                 "NESTED/MULTIPLE/INLINE": "statements",
                 "NESTED/MULTIPLE/ARE": "possible",
             },
+        ),
+        (
+            "open/two { levels = at; the = same time }\n closed = again",
+            {"OPEN/TWO/LEVELS": "at", "OPEN/TWO/THE": "same time", "CLOSED": "again"},
         ),
     ],
 )

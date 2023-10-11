@@ -37,18 +37,22 @@ def _generate_tags(text):
 @dataclasses.dataclass
 class _Parser:
     group: str = ""
+    depth: list = dataclasses.field(default_factory=list)
 
     def _parse_definition(self, definition):
         open = _OPEN.match(definition)
         if open:
             self.group = f"{self.group}/{open['group']}"
+            self.depth.append(open["group"].count("/") + 1)
             if open["inner"]:
                 yield from self._parse_definition(open["inner"])
             return
         close = _CLOSE.match(definition)
         if close:
             yield from self._parse_definition(close["inner"])
-            self.group, *_ = self.group.rpartition("/")
+            depth = self.depth.pop()
+            for _ in range(depth):
+                self.group, *_ = self.group.rpartition("/")
             return
         assignment = _ASSIGNMENT.match(definition)
         if assignment:
