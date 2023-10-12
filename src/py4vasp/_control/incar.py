@@ -17,6 +17,8 @@ class INCAR(base.InputFile):
     """
 
 
+TAGS = {}
+
 _whitespace = r"\s*"
 _optional = lambda regex: f"{regex}?"
 _name = lambda label: r"(?P<{label}>[\w/]+)".format(label=label)

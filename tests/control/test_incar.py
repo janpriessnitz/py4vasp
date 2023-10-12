@@ -1,5 +1,7 @@
 # Copyright © VASP Software GmbH,
 # Licensed under the Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+from unittest.mock import patch
+
 import pytest
 
 from py4vasp._control.incar import parse_incar_to_dict
@@ -120,3 +122,10 @@ class TestIncar(AbstractTest):
 )
 def test_from_string(input, output):
     assert parse_incar_to_dict(input) == output
+
+
+@patch("py4vasp._control.incar.TAGS", {"EXAMPLE": "html_code"})
+def test_format(format_):
+    incar = INCAR.from_string("example = 10")
+    actual, _ = format_(incar)
+    assert actual["text/plain"] == "example = 10"

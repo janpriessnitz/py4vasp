@@ -9,6 +9,9 @@ from numpy.testing import assert_array_almost_equal_nulp
 
 from py4vasp import exception, raw
 from py4vasp._data.base import _DataWrapper
+from py4vasp._util import import_
+
+formatters = import_.optional("IPython.core.formatters")
 
 number_steps = 4
 number_atoms = 7
@@ -68,6 +71,11 @@ class _Assert:
                 assert actual[key] == desired[key]
             else:
                 _Assert.allclose(actual[key], desired[key])
+
+
+@pytest.fixture
+def format_(not_core):
+    return formatters.DisplayFormatter().format
 
 
 def _is_none(data):
