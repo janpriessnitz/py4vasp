@@ -81,10 +81,28 @@ class TestIncar(AbstractTest):
             "open/two { levels = at; the = same time }\n closed = again",
             {"OPEN/TWO/LEVELS": "at", "OPEN/TWO/THE": "same time", "CLOSED": "again"},
         ),
+        (
+            r"""escape1 = assignment \= character
+            escape2 = semicolon \; character
+            escape3 = open \{ and \} close
+            escape4 = bash \# and \! fortran comment
+            escape5 = literal backslash \\; # comment ignored""",
+            # line = continuation\
+            # character""",
+            {
+                "ESCAPE1": "assignment = character",
+                "ESCAPE2": "semicolon ; character",
+                "ESCAPE3": "open { and } close",
+                "ESCAPE4": "bash # and ! fortran comment",
+                "ESCAPE5": r"literal backslash \\",
+                # "LINE": "continuation character",
+            },
+        ),
     ],
 )
 def test_from_string(input, output):
     import pprint
 
     pprint.pprint(parse_incar_to_dict(input))
+    pprint.pprint(output)
     assert parse_incar_to_dict(input) == output

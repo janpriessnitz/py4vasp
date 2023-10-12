@@ -17,9 +17,39 @@ class INCAR(base.InputFile):
     """
 
 
-_ASSIGNMENT = re.compile(r"\s*(?P<tag>[\w/]+)\s*=\s*(?P<value>.*\S)\s*")
-_OPEN = re.compile(r"\s*(?P<group>[\w/]+)\s*{\s*(?P<inner>.*\S)?\s*")
-_CLOSE = re.compile(r"\s*(?P<inner>.*)}\s*")
+_whitespace = r"\s*"
+_optional = lambda regex: f"{regex}?"
+_name = lambda label: r"(?P<{label}>[\w/]+)".format(label=label)
+_value = lambda label: r"(?P<{label}>.*\S)".format(label=label)
+_non_escaped = lambda char: r"((?<!\\){char}|(?<=\\\\){char})".format(char=char)
+_ASSIGNMENT = re.compile(
+    _whitespace
+    + _name("tag")
+    + _whitespace
+    + _non_escaped("=")
+    + _whitespace
+    + _value("value")
+    + _whitespace
+)
+_COMMENT = re.compile(_non_escaped("[#!]"))
+_INLINE = re.compile(_non_escaped(";"))
+_OPEN = re.compile(
+    _whitespace
+    + _name("group")
+    + _whitespace
+    + _non_escaped("{")
+    + _whitespace
+    + _optional(_value("inner"))
+    + _whitespace
+)
+_CLOSE = re.compile(
+    _whitespace
+    + _optional(_value("inner"))
+    + _whitespace
+    + _non_escaped("}")
+    + _whitespace
+)
+_ESCAPED = re.compile(r"\\(?P<char>[=;#!{}])")
 
 
 def parse_incar_to_dict(text):
@@ -29,8 +59,8 @@ def parse_incar_to_dict(text):
 def _generate_tags(text):
     parser = _Parser()
     for line in text.splitlines():
-        line_without_comments, *_ = re.split("[#!]", line, maxsplit=1)
-        for definition in line_without_comments.split(";"):
+        line_without_comments, *_ = _COMMENT.split(line, maxsplit=1)
+        for definition in _INLINE.split(line_without_comments):
             yield from parser._parse_definition(definition)
 
 
@@ -49,7 +79,8 @@ class _Parser:
             return
         close = _CLOSE.match(definition)
         if close:
-            yield from self._parse_definition(close["inner"])
+            if close["inner"]:
+                yield from self._parse_definition(close["inner"])
             depth = self.depth.pop()
             for _ in range(depth):
                 self.group, *_ = self.group.rpartition("/")
@@ -58,4 +89,5 @@ class _Parser:
         if assignment:
             tag = f"{self.group}/{assignment.group('tag')}".lstrip("/").upper()
             value = assignment.group("value").rstrip(" }")
+            value = _ESCAPED.sub(r"\g<char>", value)
             yield tag, value
