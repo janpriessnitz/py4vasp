@@ -119,8 +119,4 @@ class TestIncar(AbstractTest):
     ],
 )
 def test_from_string(input, output):
-    import pprint
-
-    pprint.pprint(parse_incar_to_dict(input))
-    pprint.pprint(output)
     assert parse_incar_to_dict(input) == output
