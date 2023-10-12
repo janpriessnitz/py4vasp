@@ -50,6 +50,8 @@ _CLOSE = re.compile(
     + _whitespace
 )
 _ESCAPED = re.compile(r"\\(?P<char>[=;#!{}])")
+_NEWLINES = re.compile(r"(?<!\\)\r?\n")
+_ESCAPED_NEWLINE = re.compile(_whitespace + r"\\\r?\n" + _whitespace)
 
 
 def parse_incar_to_dict(text):
@@ -58,7 +60,8 @@ def parse_incar_to_dict(text):
 
 def _generate_tags(text):
     parser = _Parser()
-    for line in text.splitlines():
+    for line in _NEWLINES.split(text):
+        line = _ESCAPED_NEWLINE.sub(" ", line)
         line_without_comments, *_ = _COMMENT.split(line, maxsplit=1)
         for definition in _INLINE.split(line_without_comments):
             yield from parser._parse_definition(definition)

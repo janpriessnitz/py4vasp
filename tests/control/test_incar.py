@@ -86,16 +86,16 @@ class TestIncar(AbstractTest):
             escape2 = semicolon \; character
             escape3 = open \{ and \} close
             escape4 = bash \# and \! fortran comment
-            escape5 = literal backslash \\; # comment ignored""",
-            # line = continuation\
-            # character""",
+            escape5 = literal backslash \\; # comment ignored
+            line = continuation\
+            character""",
             {
                 "ESCAPE1": "assignment = character",
                 "ESCAPE2": "semicolon ; character",
                 "ESCAPE3": "open { and } close",
                 "ESCAPE4": "bash # and ! fortran comment",
                 "ESCAPE5": r"literal backslash \\",
-                # "LINE": "continuation character",
+                "LINE": "continuation character",
             },
         ),
     ],
