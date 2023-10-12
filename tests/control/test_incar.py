@@ -82,6 +82,24 @@ class TestIncar(AbstractTest):
             {"OPEN/TWO/LEVELS": "at", "OPEN/TWO/THE": "same time", "CLOSED": "again"},
         ),
         (
+            r'''multiline = " tag begins by \"
+                and is parsed including all
+                line breaks until the next
+                "
+            inside = "a = multiline \= tag ; escape \;
+                characters { are \{ not } needed \} but #
+                will \# still ! be \! removed \\."''',
+            {
+                "MULTILINE": """ tag begins by "
+                and is parsed including all
+                line breaks until the next
+                """,
+                "INSIDE": r"""a = multiline = tag ; escape ;
+                characters { are { not } needed } but #
+                will # still ! be ! removed \.""",
+            },
+        ),
+        (
             r"""escape1 = assignment \= character
             escape2 = semicolon \; character
             escape3 = open \{ and \} close
@@ -94,7 +112,7 @@ class TestIncar(AbstractTest):
                 "ESCAPE2": "semicolon ; character",
                 "ESCAPE3": "open { and } close",
                 "ESCAPE4": "bash # and ! fortran comment",
-                "ESCAPE5": r"literal backslash \\",
+                "ESCAPE5": "literal backslash \\",
                 "LINE": "continuation character",
             },
         ),
